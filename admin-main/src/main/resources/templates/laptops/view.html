@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::body}, 'Chi Tiết Laptop')}">
+<body>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Chi Tiết Laptop</h5>
+                <a th:href="@{/laptops}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-4 mb-md-0">
+                        <div class="text-center p-4 bg-light rounded">
+                            <i class="bi bi-laptop fs-1 text-primary"></i>
+                            <h4 class="mt-3" th:text="${laptop.name}">Tên Laptop</h4>
+                            <div class="badge bg-primary mb-2" th:text="${laptop.brand.name}">Thương hiệu</div>
+                            <div class="d-flex justify-content-center align-items-center mt-3">
+                                <h5 class="mb-0 me-2" th:text="${#numbers.formatDecimal(laptop.getDiscountedPrice(), 0, 'COMMA', 0, 'POINT')} + ' đ'">Giá</h5>
+                                <span class="text-decoration-line-through text-muted" th:if="${laptop.discount != null && laptop.discount > 0}" 
+                                      th:text="${#numbers.formatDecimal(laptop.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">Giá gốc</span>
+                            </div>
+                            <div class="badge bg-danger mt-2" th:if="${laptop.discount != null && laptop.discount > 0}" 
+                                 th:text="'Giảm ' + ${laptop.discount} + '%'">Giảm giá</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-8">
+                        <h5 class="border-bottom pb-2">Thông tin chi tiết</h5>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="fw-bold">Tên sản phẩm:</label>
+                                    <p th:text="${laptop.name}">Tên Laptop</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="fw-bold">Thương hiệu:</label>
+                                    <p th:text="${laptop.brand.name}">Thương hiệu</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="fw-bold">Giá:</label>
+                                    <p th:text="${#numbers.formatDecimal(laptop.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">Giá</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="fw-bold">Giảm giá:</label>
+                                    <p>
+                                        <span class="badge bg-danger" th:if="${laptop.discount != null && laptop.discount > 0}" 
+                                              th:text="${laptop.discount} + '%'">5%</span>
+                                        <span th:unless="${laptop.discount != null && laptop.discount > 0}">Không có giảm giá</span>
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="fw-bold">Số lượng tồn kho:</label>
+                                    <p th:text="${laptop.stockQuantity}">10</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="fw-bold">Ngày tạo:</label>
+                                    <p th:text="${#temporals.format(laptop.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2023 10:00</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="fw-bold">Cập nhật lần cuối:</label>
+                                    <p th:text="${#temporals.format(laptop.updatedAt, 'dd/MM/yyyy HH:mm')}">01/01/2023 10:00</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2">Thông số kỹ thuật</h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped">
+                                    <tbody>
+                                        <tr th:if="${laptop.specs != null && laptop.specs.contains('CPU:')}">
+                                            <th style="width: 150px">CPU</th>
+                                            <td th:text="${#strings.substringAfter(#strings.substringBefore(laptop.specs + ',CPU:', ','), 'CPU:')}">Intel Core i7-13620H (3.6GHz~4.9GHz) 10 Nhân 16 Luồng</td>
+                                        </tr>
+                                        <tr th:if="${laptop.specs != null && laptop.specs.contains('RAM:')}">
+                                            <th>RAM</th>
+                                            <td th:text="${#strings.substringAfter(#strings.substringBefore(laptop.specs + ',RAM:', ','), 'RAM:')}">16GB (2 x 8GB) DDR4 3200MHz</td>
+                                        </tr>
+                                        <tr th:if="${laptop.specs != null && laptop.specs.contains('Ổ cứng:')}">
+                                            <th>Ổ cứng</th>
+                                            <td th:text="${#strings.substringAfter(#strings.substringBefore(laptop.specs + ',Ổ cứng:', ','), 'Ổ cứng:')}">SSD NVMe PCIe 512GB Gen4x4</td>
+                                        </tr>
+                                        <tr th:if="${laptop.specs != null && laptop.specs.contains('VGA:')}">
+                                            <th>VGA</th>
+                                            <td th:text="${#strings.substringAfter(#strings.substringBefore(laptop.specs + ',VGA:', ','), 'VGA:')}">NVIDIA® GeForce RTX™ 3050 Laptop GPU</td>
+                                        </tr>
+                                        <tr th:if="${laptop.specs != null && laptop.specs.contains('Màn hình:')}">
+                                            <th>Màn hình</th>
+                                            <td th:text="${#strings.substringAfter(#strings.substringBefore(laptop.specs + ',Màn hình:', ','), 'Màn hình:')}">15.6" FHD (1920x1080), 144Hz</td>
+                                        </tr>
+                                        <tr th:if="${laptop.specs != null && laptop.specs.contains('Cổng giao tiếp:')}">
+                                            <th>Cổng giao tiếp</th>
+                                            <td th:text="${#strings.substringAfter(#strings.substringBefore(laptop.specs + ',Cổng giao tiếp:', ','), 'Cổng giao tiếp:')}">1x Type-C USB3.2 Gen2, 3x Type-A USB3.2 Gen1</td>
+                                        </tr>
+                                        <tr th:if="${laptop.specs != null && laptop.specs.contains('Bàn phím:')}">
+                                            <th>Bàn phím</th>
+                                            <td th:text="${#strings.substringAfter(#strings.substringBefore(laptop.specs + ',Bàn phím:', ','), 'Bàn phím:')}">Single Backlit Keyboard (Blue)</td>
+                                        </tr>
+                                        <tr th:if="${laptop.specs != null && laptop.specs.contains('Audio:')}">
+                                            <th>Audio</th>
+                                            <td th:text="${#strings.substringAfter(#strings.substringBefore(laptop.specs + ',Audio:', ','), 'Audio:')}">2x 2W Speaker</td>
+                                        </tr>
+                                        <tr th:if="${laptop.specs != null && laptop.specs.contains('Chuẩn LAN:')}">
+                                            <th>Chuẩn LAN</th>
+                                            <td th:text="${#strings.substringAfter(#strings.substringBefore(laptop.specs + ',Chuẩn LAN:', ','), 'Chuẩn LAN:')}">Gigabit Ethernet</td>
+                                        </tr>
+                                        <tr th:if="${laptop.specs != null && laptop.specs.contains('Chuẩn WIFI:')}">
+                                            <th>Chuẩn WIFI</th>
+                                            <td th:text="${#strings.substringAfter(#strings.substringBefore(laptop.specs + ',Chuẩn WIFI:', ','), 'Chuẩn WIFI:')}">802.11 ax Wi-Fi 6E</td>
+                                        </tr>
+                                        <tr th:if="${laptop.specs != null && laptop.specs.contains('Bluetooth:')}">
+                                            <th>Bluetooth</th>
+                                            <td th:text="${#strings.substringAfter(#strings.substringBefore(laptop.specs + ',Bluetooth:', ','), 'Bluetooth:')}">v5.3</td>
+                                        </tr>
+                                        <tr th:if="${laptop.specs != null && laptop.specs.contains('Webcam:')}">
+                                            <th>Webcam</th>
+                                            <td th:text="${#strings.substringAfter(#strings.substringBefore(laptop.specs + ',Webcam:', ','), 'Webcam:')}">HD type (30fps@720p)</td>
+                                        </tr>
+                                        <tr th:if="${laptop.specs != null && laptop.specs.contains('Hệ điều hành:')}">
+                                            <th>Hệ điều hành</th>
+                                            <td th:text="${#strings.substringAfter(#strings.substringBefore(laptop.specs + ',Hệ điều hành:', ','), 'Hệ điều hành:')}">Windows 11 Home</td>
+                                        </tr>
+                                        <tr th:if="${laptop.specs != null && laptop.specs.contains('Pin:')}">
+                                            <th>Pin</th>
+                                            <td th:text="${#strings.substringAfter(#strings.substringBefore(laptop.specs + ',Pin:', ','), 'Pin:')}">3-Cell 52.4 Battery (Whr)</td>
+                                        </tr>
+                                        <tr th:if="${laptop.specs != null && laptop.specs.contains('Trọng lượng:')}">
+                                            <th>Trọng lượng</th>
+                                            <td th:text="${#strings.substringAfter(#strings.substringBefore(laptop.specs + ',Trọng lượng:', ','), 'Trọng lượng:')}">1.86 kg</td>
+                                        </tr>
+                                        <tr th:if="${laptop.specs != null && laptop.specs.contains('Màu sắc:')}">
+                                            <th>Màu sắc</th>
+                                            <td th:text="${#strings.substringAfter(#strings.substringBefore(laptop.specs + ',Màu sắc:', ','), 'Màu sắc:')}">Cosmos Gray</td>
+                                        </tr>
+                                        <tr th:if="${laptop.specs != null && laptop.specs.contains('Kích thước:')}">
+                                            <th>Kích thước</th>
+                                            <td th:text="${#strings.substringAfter(#strings.substringBefore(laptop.specs + ',Kích thước:', ','), 'Kích thước:')}">359 x 254 x 21.7 mm</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <a th:href="@{/laptops/edit/{id}(id=${laptop.id})}" class="btn btn-primary">
+                                <i class="bi bi-pencil me-1"></i> Chỉnh sửa
+                            </a>
+                            <a th:href="@{/laptops/delete/{id}(id=${laptop.id})}" class="btn btn-danger" 
+                               onclick="return confirm('Bạn có chắc chắn muốn xóa laptop này?')">
+                                <i class="bi bi-trash me-1"></i> Xóa
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-muted">
+                <small>Tạo lúc: <span th:text="${#temporals.format(laptop.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2023 10:00</span> | 
+                Cập nhật lần cuối: <span th:text="${#temporals.format(laptop.updatedAt, 'dd/MM/yyyy HH:mm')}">01/01/2023 10:00</span></small>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

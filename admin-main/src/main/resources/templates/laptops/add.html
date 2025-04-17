@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::body}, 'Thêm Laptop Mới')}">
+<body>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Thêm Laptop Mới</h5>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/laptops/add}" method="post" th:object="${laptop}">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Tên máy tính xách tay</label>
+                        <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="MacBook Pro 16" required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="price" class="form-label">Giá (VND)</label>
+                            <input type="number" class="form-control" id="price" th:field="*{price}" min="0" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="discount" class="form-label">Giảm giá (%)</label>
+                            <div class="d-flex align-items-center">
+                                <input type="range" class="form-range me-2" id="discountRange" min="0" max="100" value="0" oninput="updateDiscountValue(this.value)">
+                                <input type="number" class="form-control" style="width: 80px" id="discount" th:field="*{discount}" min="0" max="100">
+                                <span class="ms-2">%</span>
+                            </div>
+                            <div class="d-flex justify-content-between mt-1">
+                                <small>0%</small>
+                                <small>100%</small>
+                            </div>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('discount')}" th:errors="*{discount}"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="brand" class="form-label">Thương hiệu</label>
+                        <select class="form-select" id="brand" th:field="*{brand}" required>
+                            <option value="">Chọn một thương hiệu</option>
+                            <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
+                        </select>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('brand')}" th:errors="*{brand}"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="stockQuantity" class="form-label">Tồn kho</label>
+                        <input type="number" class="form-control" id="stockQuantity" th:field="*{stockQuantity}" min="0" required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('stockQuantity')}" th:errors="*{stockQuantity}"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="specs" class="form-label">Thông số kỹ thuật</label>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th style="width: 150px">CPU</th>
+                                        <td><input type="text" class="form-control" id="cpu" placeholder="Intel Core i7-13620H (3.6GHz~4.9GHz) 10 Nhân 16 Luồng"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>RAM</th>
+                                        <td><input type="text" class="form-control" id="ram" placeholder="16GB (2 x 8GB) DDR4 3200MHz (2x SO-DIMM socket, up to 64GB SDRAM)"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ổ cứng</th>
+                                        <td><input type="text" class="form-control" id="storage" placeholder="SSD NVMe PCIe 512GB Gen4x4 (1 khe)"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>VGA</th>
+                                        <td><input type="text" class="form-control" id="vga" placeholder="NVIDIA® GeForce RTX™ 3050 Laptop GPU"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Màn hình</th>
+                                        <td><input type="text" class="form-control" id="display" placeholder="15.6&quot; FHD (1920x1080), 144Hz, IPS-Level, 45% NTSC, 65% sRGB"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Cổng giao tiếp</th>
+                                        <td><input type="text" class="form-control" id="ports" placeholder="1x Type-C USB3.2 Gen2 (DP), 3x Type-A USB3.2 Gen1, 1x HDMI (4K @ 30Hz), 1x RJ45"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Bàn phím</th>
+                                        <td><input type="text" class="form-control" id="keyboard" placeholder="Single Backlit Keyboard (Blue)"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Audio</th>
+                                        <td><input type="text" class="form-control" id="audio" placeholder="2x 2W Speaker"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Chuẩn LAN</th>
+                                        <td><input type="text" class="form-control" id="lan" placeholder="Gigabit Ethernet"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Chuẩn WIFI</th>
+                                        <td><input type="text" class="form-control" id="wifi" placeholder="802.11 ax Wi-Fi 6E"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Bluetooth</th>
+                                        <td><input type="text" class="form-control" id="bluetooth" placeholder="v5.3"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Webcam</th>
+                                        <td><input type="text" class="form-control" id="webcam" placeholder="HD type (30fps@720p)"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Hệ điều hành</th>
+                                        <td><input type="text" class="form-control" id="os" placeholder="Windows 11 Home"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Pin</th>
+                                        <td><input type="text" class="form-control" id="battery" placeholder="3-Cell 52.4 Battery (Whr)"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Trọng lượng</th>
+                                        <td><input type="text" class="form-control" id="weight" placeholder="1.86 kg"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Màu sắc</th>
+                                        <td><input type="text" class="form-control" id="color" placeholder="Cosmos Gray"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Kích thước</th>
+                                        <td><input type="text" class="form-control" id="dimensions" placeholder="359 x 254 x 21.7 mm"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <input type="hidden" class="form-control" id="specs" th:field="*{specs}">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('specs')}" th:errors="*{specs}"></div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a th:href="@{/laptops}" class="btn btn-secondary">Hủy</a>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Cập nhật giá trị discount khi kéo thanh trượt
+        function updateDiscountValue(val) {
+            document.getElementById('discount').value = val;
+        }
+        
+        // Cập nhật thanh trượt khi nhập giá trị
+        document.getElementById('discount').addEventListener('input', function() {
+            document.getElementById('discountRange').value = this.value;
+        });
+        
+        // Cập nhật thông số kỹ thuật khi chọn RAM và card đồ họa
+        document.querySelectorAll('input[name="ramOption"]').forEach(radio => {
+            radio.addEventListener('change', updateSpecifications);
+        });
+        
+        document.getElementById('graphicsCard').addEventListener('change', updateSpecifications);
+        
+        function updateSpecifications() {
+            const ramValue = document.querySelector('input[name="ramOption"]:checked').value;
+            const gpuValue = document.getElementById('graphicsCard').value;
+            document.getElementById('ram').value = ramValue;
+            document.getElementById('vga').value = gpuValue;
+            updateSpecsField();
+        }
+        
+        // Thu thập tất cả thông số kỹ thuật từ bảng và cập nhật vào trường specs
+        function updateSpecsField() {
+            const specs = {
+                'CPU': document.getElementById('cpu').value,
+                'RAM': document.getElementById('ram').value,
+                'Ổ cứng': document.getElementById('storage').value,
+                'VGA': document.getElementById('vga').value,
+                'Màn hình': document.getElementById('display').value,
+                'Cổng giao tiếp': document.getElementById('ports').value,
+                'Bàn phím': document.getElementById('keyboard').value,
+                'Audio': document.getElementById('audio').value,
+                'Chuẩn LAN': document.getElementById('lan').value,
+                'Chuẩn WIFI': document.getElementById('wifi').value,
+                'Bluetooth': document.getElementById('bluetooth').value,
+                'Webcam': document.getElementById('webcam').value,
+                'Hệ điều hành': document.getElementById('os').value,
+                'Pin': document.getElementById('battery').value,
+                'Trọng lượng': document.getElementById('weight').value,
+                'Màu sắc': document.getElementById('color').value,
+                'Kích thước': document.getElementById('dimensions').value
+            };
+            
+            let specsString = '';
+            for (const [key, value] of Object.entries(specs)) {
+                if (value) {
+                    specsString += `${key}: ${value}, `;
+                }
+            }
+            // Xóa dấu phẩy và khoảng trắng cuối cùng
+            specsString = specsString.replace(/,\s*$/, '');
+            document.getElementById('specs').value = specsString;
+        }
+        
+        // Thêm sự kiện input cho tất cả các trường thông số kỹ thuật
+        document.addEventListener('DOMContentLoaded', function() {
+            const techSpecInputs = [
+                'cpu', 'ram', 'storage', 'vga', 'display', 'ports', 'keyboard', 'audio',
+                'lan', 'wifi', 'bluetooth', 'webcam', 'os', 'battery', 'weight', 'color', 'dimensions'
+            ];
+            
+            techSpecInputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', updateSpecsField);
+            });
+            
+            // Đảm bảo form được cập nhật trước khi submit
+            document.querySelector('form').addEventListener('submit', function() {
+                updateSpecsField();
+            });
+            
+            // Khởi tạo ban đầu
+            updateSpecifications();
+        });
+    </script>
+</body>
+</html>

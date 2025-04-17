@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::body}, 'Thêm Hãng')}">
+<body>
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Thêm Hãng</h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/brands/add}" th:object="${brand}" method="post">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Tên Hãng</label>
+                    <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+                        Tên hãng không hợp lệ.
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Lưu</button>
+                <a th:href="@{/brands}" class="btn btn-secondary">Hủy</a>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

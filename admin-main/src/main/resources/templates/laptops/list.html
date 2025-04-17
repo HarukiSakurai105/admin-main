@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::body}, 'Laptops Management')}">
+<body>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="card-title mb-0">Quản lý máy tính xách tay</h5>
+                    <p class="text-muted small mb-0">Quản lý hàng tồn kho, giá cả và thông số kỹ thuật của máy tính xách tay.</p>
+                </div>
+                <a th:href="@{/laptops/add}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-1"></i> Thêm máy tính xách tay mới
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control" placeholder="Search laptops by name or spec...">
+                        </div>
+                    </div>
+                    <div class="col-md-3 ms-auto">
+                        <select class="form-select" id="brandFilter">
+                            <option value="">Tất cả thương hiệu</option>
+                            <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-outline-secondary w-100" id="priceFilter">
+                            <i class="bi bi-funnel me-1"></i> Giá
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Tên sản phẩm</th>
+                                <th>Thương hiệu</th>
+                                <th>RAM</th>
+                                <th>GPU</th>
+                                <th>Giá</th>
+                                <th>Giảm giá</th>
+                                <th>Giá cuối cùng</th>
+                                <th>Đã thêm</th>
+                                <th>Cập nhật lần cuối</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="laptop : ${laptops}">
+                                <td th:text="${laptop.name}">MacBook Pro 16</td>
+                                <td th:text="${laptop.brand.name}">Apple</td>
+                                <td th:text="${laptop.specs != null && laptop.specs.contains('RAM:') ? #strings.substringAfter(#strings.substringBefore(laptop.specs + ',RAM:', ','), 'RAM:') : 'N/A'}">16GB DDR4</td>
+                                <td th:text="${laptop.specs != null && laptop.specs.contains('VGA:') ? #strings.substringAfter(#strings.substringBefore(laptop.specs + ',VGA:', ','), 'VGA:') : 'N/A'}">NVIDIA GeForce RTX 3050</td>
+                                <td th:text="${#numbers.formatDecimal(laptop.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">45.000.000 đ</td>
+                                <td>
+                                    <span class="badge bg-danger" th:if="${laptop.discount != null && laptop.discount > 0}" 
+                                          th:text="${laptop.discount} + '%'">5%</span>
+                                    <span th:unless="${laptop.discount != null && laptop.discount > 0}">-</span>
+                                </td>
+                                <td th:text="${#numbers.formatDecimal(laptop.getDiscountedPrice(), 0, 'COMMA', 0, 'POINT')} + ' đ'">42.750.000 đ</td>
+                                <td th:text="${#temporals.format(laptop.createdAt, 'dd/MM/yyyy HH:mm')}">10/04/2023 15:30</td>
+                                <td th:text="${#temporals.format(laptop.updatedAt, 'dd/MM/yyyy HH:mm')}">10/04/2023 15:30</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                            <i class="bi bi-three-dots"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" th:href="@{/laptops/view/{id}(id=${laptop.id})}"><i class="bi bi-eye me-2"></i>View</a></li>
+                                            <li><a class="dropdown-item" th:href="@{/laptops/edit/{id}(id=${laptop.id})}"><i class="bi bi-pencil me-2"></i>Edit</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item text-danger" th:href="@{/laptops/delete/{id}(id=${laptop.id})}"><i class="bi bi-trash me-2"></i>Delete</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(laptops)}">
+                                <td colspan="10" class="text-center py-4">
+                                    <i class="bi bi-inbox fs-1 text-muted"></i>
+                                    <p class="mt-2">Không tìm thấy máy tính xách tay</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

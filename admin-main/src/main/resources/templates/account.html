@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Account Information</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .account-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            display: flex;
+            gap: 2rem;
+        }
+
+        .profile-section {
+            flex: 0 0 300px;
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            background: #f0f0f0;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .profile-role {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .profile-contact {
+            text-align: left;
+            margin-top: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: #666;
+        }
+
+        .main-content {
+            flex: 1;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #f0f0f0;
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            padding: 1rem 2rem;
+            color: #666;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .tab.active {
+            color: #007bff;
+            border-bottom-color: #007bff;
+        }
+
+        .info-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .info-group label {
+            display: block;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-group .value {
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+            color: #333;
+        }
+
+        .info-section {
+            margin-bottom: 2rem;
+        }
+
+        .info-section h2 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="account-container">
+        <div class="profile-section">
+            <div class="profile-image"></div>
+            <h2 class="profile-name" th:text="${admin?.username}">Nguyễn Văn Admin</h2>
+            <div class="profile-role">Quản Trị Viên</div>
+            
+            <div class="profile-contact">
+                <div class="contact-item">
+                    <span th:text="${admin?.email}">admin@example.com</span>
+                </div>
+                <div class="contact-item">
+                    <span>Phone number not available</span>
+                </div>
+                <div class="contact-item">
+                    <span>Address not available</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="tabs">
+                <div class="tab active">Hồ Sơ</div>
+                <div class="tab">Bảo Mật</div>
+            </div>
+
+            <div class="info-section">
+                <h2>Thông tin cơ bản</h2>
+                <div class="info-group">
+                    <label>Họ và tên</label>
+                </div>
+                
+                <div class="info-group">
+                    <label>Email</label>
+                    <div class="value" th:text="${admin?.email}">admin@example.com</div>
+                </div>
+
+                <div class="info-group">
+                    <label>Số điện thoại</label>
+                    <span>Phone number not available</span>
+                </div>
+
+                <div class="info-group">
+                    <label>Địa chỉ</label>
+                    <div class="value" th:text="${admin?.address}">123 Đường Nguyễn Huệ, Quận 1, TP.HCM</div>
+                </div>
+
+                <div class="info-group">
+                    <label>Giới thiệu</label>
+                    <div class="value" th:text="${admin?.description}">Quản trị viên hệ thống quản lý laptop.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

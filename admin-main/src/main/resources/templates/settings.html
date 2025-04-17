@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::body}, 'Cài đặt hệ thống')}">
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-10 mx-auto">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-0">
+                        <h5 class="card-title mb-0">Cài đặt hệ thống</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="nav nav-tabs" id="settingsTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" aria-selected="true">
+                                    <i class="bi bi-gear me-1"></i> Cài đặt chung
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="notification-tab" data-bs-toggle="tab" data-bs-target="#notification" type="button" role="tab" aria-controls="notification" aria-selected="false">
+                                    <i class="bi bi-bell me-1"></i> Thông báo
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="backup-tab" data-bs-toggle="tab" data-bs-target="#backup" type="button" role="tab" aria-controls="backup" aria-selected="false">
+                                    <i class="bi bi-cloud-arrow-up me-1"></i> Sao lưu & Phục hồi
+                                </button>
+                            </li>
+                        </ul>
+                        <div class="tab-content p-3" id="settingsTabsContent">
+                            <!-- Cài đặt chung -->
+                            <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
+                                <form action="#" method="post" class="needs-validation" novalidate>
+                                    <div class="mb-4">
+                                        <h6 class="border-bottom pb-2">Thông tin cửa hàng</h6>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-3 col-form-label">Tên cửa hàng:</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="storeName" value="Laptop Shop" required>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-3 col-form-label">Địa chỉ:</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="address" value="123 Đường ABC, Quận XYZ, TP. HCM">
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-3 col-form-label">Email liên hệ:</label>
+                                            <div class="col-sm-9">
+                                                <input type="email" class="form-control" name="contactEmail" value="contact@laptopshop.com" required>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-3 col-form-label">Số điện thoại:</label>
+                                            <div class="col-sm-9">
+                                                <input type="tel" class="form-control" name="contactPhone" value="0123456789">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <h6 class="border-bottom pb-2">Cài đặt hiển thị</h6>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-3 col-form-label">Số mục trên mỗi trang:</label>
+                                            <div class="col-sm-9">
+                                                <select class="form-select" name="itemsPerPage">
+                                                    <option value="10">10</option>
+                                                    <option value="20" selected>20</option>
+                                                    <option value="50">50</option>
+                                                    <option value="100">100</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-3 col-form-label">Định dạng ngày:</label>
+                                            <div class="col-sm-9">
+                                                <select class="form-select" name="dateFormat">
+                                                    <option value="dd/MM/yyyy" selected>DD/MM/YYYY</option>
+                                                    <option value="MM/dd/yyyy">MM/DD/YYYY</option>
+                                                    <option value="yyyy-MM-dd">YYYY-MM-DD</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-end">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-save me-1"></i> Lưu thay đổi
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <!-- Thông báo -->
+                            <div class="tab-pane fade" id="notification" role="tabpanel" aria-labelledby="notification-tab">
+                                <form action="#" method="post">
+                                    <div class="mb-4">
+                                        <h6 class="border-bottom pb-2">Cài đặt thông báo</h6>
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="emailNotification" checked>
+                                            <label class="form-check-label" for="emailNotification">Gửi thông báo qua email</label>
+                                        </div>
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="stockAlert" checked>
+                                            <label class="form-check-label" for="stockAlert">Cảnh báo khi hàng sắp hết</label>
+                                        </div>
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="loginAlert" checked>
+                                            <label class="form-check-label" for="loginAlert">Thông báo khi có đăng nhập mới</label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <h6 class="border-bottom pb-2">Ngưỡng cảnh báo</h6>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-4 col-form-label">Ngưỡng cảnh báo tồn kho:</label>
+                                            <div class="col-sm-8">
+                                                <input type="number" class="form-control" name="stockThreshold" value="5">
+                                                <small class="text-muted">Cảnh báo khi số lượng tồn kho dưới giá trị này</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-end">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-save me-1"></i> Lưu thay đổi
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <!-- Sao lưu & Phục hồi -->
+                            <div class="tab-pane fade" id="backup" role="tabpanel" aria-labelledby="backup-tab">
+                                <div class="mb-4">
+                                    <h6 class="border-bottom pb-2">Sao lưu dữ liệu</h6>
+                                    <p class="text-muted">Tạo bản sao lưu dữ liệu hệ thống để đảm bảo an toàn.</p>
+                                    <div class="d-flex gap-2 mb-4">
+                                        <button class="btn btn-primary">
+                                            <i class="bi bi-cloud-arrow-up me-1"></i> Sao lưu ngay
+                                        </button>
+                                        <button class="btn btn-outline-secondary">
+                                            <i class="bi bi-clock-history me-1"></i> Lịch sử sao lưu
+                                        </button>
+                                    </div>
+                                    
+                                    <h6 class="border-bottom pb-2 mt-4">Sao lưu tự động</h6>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="autoBackup" checked>
+                                        <label class="form-check-label" for="autoBackup">Bật sao lưu tự động</label>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <label class="col-sm-3 col-form-label">Tần suất sao lưu:</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-select" name="backupFrequency">
+                                                <option value="daily">Hàng ngày</option>
+                                                <option value="weekly" selected>Hàng tuần</option>
+                                                <option value="monthly">Hàng tháng</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <h6 class="border-bottom pb-2 mt-4">Phục hồi dữ liệu</h6>
+                                    <p class="text-muted">Phục hồi dữ liệu từ bản sao lưu trước đó.</p>
+                                    <div class="mb-3">
+                                        <label for="backupFile" class="form-label">Chọn file sao lưu:</label>
+                                        <input class="form-control" type="file" id="backupFile">
+                                    </div>
+                                    <button class="btn btn-warning">
+                                        <i class="bi bi-cloud-arrow-down me-1"></i> Phục hồi dữ liệu
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
