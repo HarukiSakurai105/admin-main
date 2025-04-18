@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::body}, 'Chỉnh sửa tài khoản')}">
+<body>
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Chỉnh sửa thông tin tài khoản</h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/account/edit}" th:object="${admin}" method="post">
+                            <input type="hidden" th:field="*{id}">
+                            <input type="hidden" th:field="*{username}">
+                            <input type="hidden" th:field="*{passwordHash}">
+                            <input type="hidden" th:field="*{role}">
+                            
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Tên đăng nhập</label>
+                                <input type="text" class="form-control" id="username" th:value="*{username}" disabled>
+                                <div class="form-text">Tên đăng nhập không thể thay đổi</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="role" class="form-label">Vai trò</label>
+                                <input type="text" class="form-control" id="role" th:value="*{role}" disabled>
+                                <div class="form-text">Vai trò chỉ có thể được thay đổi bởi quản trị viên</div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <a th:href="@{/account}" class="btn btn-secondary">Hủy</a>
+                                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

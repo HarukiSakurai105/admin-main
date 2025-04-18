@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::body}, 'Xác nhận xóa laptop')}">
+<body>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Xác nhận xóa laptop</h5>
+                <a th:href="@{/laptops}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>Cảnh báo:</strong> Bạn đang chuẩn bị xóa laptop này. Hành động này không thể hoàn tác.
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mx-auto">
+                        <div class="text-center p-4 bg-light rounded mb-4">
+                            <i class="bi bi-laptop fs-1 text-danger"></i>
+                            <h4 class="mt-3" th:text="${laptop.name}">Tên Laptop</h4>
+                            <div class="badge bg-primary mb-2" th:text="${laptop.brand.name}">Thương hiệu</div>
+                            <div class="d-flex justify-content-center align-items-center mt-3">
+                                <h5 class="mb-0 me-2" th:text="${#numbers.formatDecimal(laptop.getDiscountedPrice(), 0, 'COMMA', 0, 'POINT')} + ' đ'">Giá</h5>
+                            </div>
+                        </div>
+                        
+                        <form th:action="@{/laptops/delete/{id}(id=${laptop.id})}" method="post">
+                            <div class="d-grid gap-2">
+                                <a th:href="@{/laptops}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-x-circle me-1"></i> Hủy bỏ
+                                </a>
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-trash me-1"></i> Xác nhận xóa
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::body}, 'Xóa Thương Hiệu')}">
+<body>
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Xác Nhận Xóa Thương Hiệu</h5>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger" th:if="${!canDelete}">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                Không thể xóa thương hiệu này vì đang có <strong th:text="${laptopCount}">0</strong> laptop thuộc thương hiệu này.
+            </div>
+            
+            <div class="alert alert-warning" th:if="${canDelete}">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                Bạn có chắc chắn muốn xóa thương hiệu này không? Hành động này không thể hoàn tác.
+            </div>
+            
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${brand.name}">Tên Thương Hiệu</h5>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            Ngày tạo: <span th:text="${#temporals.format(brand.createdAt, 'dd/MM/yyyy')}">01/01/2023</span>
+                        </small>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <a th:href="@{/brands}" class="btn btn-secondary">Quay lại</a>
+                <form th:if="${canDelete}" th:action="@{/brands/delete/{id}(id=${brand.id})}" method="post">
+                    <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

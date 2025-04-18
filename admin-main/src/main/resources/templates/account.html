@@ -1,163 +1,77 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Account Information</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <style>
-        .account-container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 2rem;
-            display: flex;
-            gap: 2rem;
-        }
-
-        .profile-section {
-            flex: 0 0 300px;
-            text-align: center;
-            padding: 2rem;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-        }
-
-        .profile-image {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            margin: 0 auto 1rem;
-            background: #f0f0f0;
-        }
-
-        .profile-name {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-
-        .profile-role {
-            color: #666;
-            margin-bottom: 1rem;
-        }
-
-        .profile-contact {
-            text-align: left;
-            margin-top: 2rem;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1rem;
-            color: #666;
-        }
-
-        .main-content {
-            flex: 1;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            padding: 2rem;
-        }
-
-        .tabs {
-            display: flex;
-            border-bottom: 2px solid #f0f0f0;
-            margin-bottom: 2rem;
-        }
-
-        .tab {
-            padding: 1rem 2rem;
-            color: #666;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            margin-bottom: -2px;
-        }
-
-        .tab.active {
-            color: #007bff;
-            border-bottom-color: #007bff;
-        }
-
-        .info-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .info-group label {
-            display: block;
-            color: #666;
-            margin-bottom: 0.5rem;
-        }
-
-        .info-group .value {
-            padding: 0.75rem;
-            background: #f8f9fa;
-            border-radius: 4px;
-            color: #333;
-        }
-
-        .info-section {
-            margin-bottom: 2rem;
-        }
-
-        .info-section h2 {
-            color: #333;
-            margin-bottom: 1.5rem;
-            font-size: 1.2rem;
-        }
-    </style>
-</head>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::body}, 'Thông tin tài khoản')}">
 <body>
-    <div class="account-container">
-        <div class="profile-section">
-            <div class="profile-image"></div>
-            <h2 class="profile-name" th:text="${admin?.username}">Nguyễn Văn Admin</h2>
-            <div class="profile-role">Quản Trị Viên</div>
-            
-            <div class="profile-contact">
-                <div class="contact-item">
-                    <span th:text="${admin?.email}">admin@example.com</span>
-                </div>
-                <div class="contact-item">
-                    <span>Phone number not available</span>
-                </div>
-                <div class="contact-item">
-                    <span>Address not available</span>
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-success" th:if="${param.success}" role="alert">
+                    Cập nhật thông tin tài khoản thành công!
                 </div>
             </div>
         </div>
-
-        <div class="main-content">
-            <div class="tabs">
-                <div class="tab active">Hồ Sơ</div>
-                <div class="tab">Bảo Mật</div>
-            </div>
-
-            <div class="info-section">
-                <h2>Thông tin cơ bản</h2>
-                <div class="info-group">
-                    <label>Họ và tên</label>
+        
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-person-circle" style="font-size: 5rem;"></i>
+                        </div>
+                        <h5 class="card-title" th:text="${admin.username}">Username</h5>
+                        <p class="card-text text-muted" th:text="${admin.role}">Role</p>
+                        <a th:href="@{/account/edit}" class="btn btn-primary">Chỉnh sửa thông tin</a>
+                    </div>
                 </div>
                 
-                <div class="info-group">
-                    <label>Email</label>
-                    <div class="value" th:text="${admin?.email}">admin@example.com</div>
+                <div class="card">
+                    <div class="card-header">Thông tin liên hệ</div>
+                    <div class="card-body">
+                        <p><strong>Email:</strong> <span th:text="${admin.email}">email@example.com</span></p>
+                        <p><strong>Vai trò:</strong> <span th:text="${admin.role}">ADMIN</span></p>
+                        <p><strong>Ngày tạo:</strong> <span th:text="${#temporals.format(admin.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2023</span></p>
+                    </div>
                 </div>
-
-                <div class="info-group">
-                    <label>Số điện thoại</label>
-                    <span>Phone number not available</span>
-                </div>
-
-                <div class="info-group">
-                    <label>Địa chỉ</label>
-                    <div class="value" th:text="${admin?.address}">123 Đường Nguyễn Huệ, Quận 1, TP.HCM</div>
-                </div>
-
-                <div class="info-group">
-                    <label>Giới thiệu</label>
-                    <div class="value" th:text="${admin?.description}">Quản trị viên hệ thống quản lý laptop.</div>
+            </div>
+            
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" id="accountTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="activity-tab" data-bs-toggle="tab" data-bs-target="#activity" type="button" role="tab" aria-controls="activity" aria-selected="true">Hoạt động gần đây</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button" role="tab" aria-controls="security" aria-selected="false">Bảo mật</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content" id="accountTabsContent">
+                            <div class="tab-pane fade show active" id="activity" role="tabpanel" aria-labelledby="activity-tab">
+                                <h5 class="card-title">Hoạt động gần đây của bạn</h5>
+                                <p class="card-text">Danh sách các hoạt động gần đây sẽ được hiển thị ở đây.</p>
+                                <!-- Có thể thêm danh sách các log hoạt động của admin này ở đây -->
+                            </div>
+                            <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
+                                <h5 class="card-title">Thay đổi mật khẩu</h5>
+                                <form th:action="@{/account/change-password}" method="post">
+                                    <div class="mb-3">
+                                        <label for="currentPassword" class="form-label">Mật khẩu hiện tại</label>
+                                        <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="newPassword" class="form-label">Mật khẩu mới</label>
+                                        <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="confirmPassword" class="form-label">Xác nhận mật khẩu mới</label>
+                                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Cập nhật mật khẩu</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

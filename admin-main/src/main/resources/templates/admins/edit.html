@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::body}, 'Chỉnh sửa tài khoản')}">
+<body>
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Chỉnh sửa tài khoản</h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/admins/edit/{id}(id=${admin.id})}" th:object="${admin}" method="post">
+                            <input type="hidden" th:field="*{id}">
+                            
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Tên đăng nhập</label>
+                                <input type="text" class="form-control" id="username" th:field="*{username}" readonly>
+                                <div class="form-text">Tên đăng nhập không thể thay đổi</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="passwordHash" class="form-label">Mật khẩu mới (để trống nếu không thay đổi)</label>
+                                <input type="password" class="form-control" id="passwordHash" th:field="*{passwordHash}">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="role" class="form-label">Vai trò</label>
+                                <select class="form-select" id="role" th:field="*{role}" required>
+                                    <option value="ADMIN">ADMIN</option>
+                                    <option value="STAFF">STAFF</option>
+                                </select>
+                                <div class="text-danger" th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <a th:href="@{/admins}" class="btn btn-secondary">Hủy</a>
+                                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

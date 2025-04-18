@@ -8,6 +8,8 @@ import com.laptopshop.admin.repository.AdminRepository;
 import com.laptopshop.admin.repository.BrandRepository;
 import com.laptopshop.admin.repository.LaptopRepository;
 import com.laptopshop.admin.repository.LogRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -28,6 +30,8 @@ import java.util.Optional;
 
 @Controller
 public class WebController {
+    
+    private static final Logger logger = LoggerFactory.getLogger(WebController.class);
 
     @Autowired
     private LaptopRepository laptopRepository;
@@ -81,7 +85,7 @@ public class WebController {
     @GetMapping("/laptops/view/{id}")
     public String viewLaptop(@PathVariable("id") Long id, Model model) {
         logger.info("Attempting to view laptop with ID: {}", id);
-        Optional<Laptop> laptopOpt = laptopRepository.findById(id);
+        Optional<Laptop> laptopOpt = laptopRepository.findById(id.intValue());
 
         if (laptopOpt.isEmpty()) {
             logger.warn("Laptop with ID {} not found. Redirecting to laptops list.", id);
@@ -158,17 +162,222 @@ public class WebController {
     }
 
     @GetMapping("/account")
-    public String accountInfo(Model model) {
-        // Trong thực tế sẽ lấy thông tin từ session hoặc authentication
-        Admin admin = adminRepository.findById(1).orElse(new Admin());
+    public String accountInfo(Model model, HttpServletRequest request) {
+        // Lấy thông tin admin từ session
+        Admin admin = (Admin) request.getSession().getAttribute("admin");
+        if (admin == null) {
+            return "redirect:/login";
+        }
         model.addAttribute("admin", admin);
         return "account";
     }
+    
+    @GetMapping("/account/edit")
+    public String showEditAccountForm(Model model, HttpServletRequest request) {
+        // Lấy thông tin admin từ session
+        Admin admin = (Admin) request.getSession().getAttribute("admin");
+        if (admin == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("admin", admin);
+        return "account-edit";
+    }
+    
+    @PostMapping("/account/edit")
+    public String updateAccount(@Valid @ModelAttribute("admin") Admin updatedAdmin, 
+                              BindingResult result, 
+                              HttpServletRequest request) {
+        if (result.hasErrors()) {
+            return "account-edit";
+        }
+        
+        // Lấy thông tin admin hiện tại từ session
+        Admin currentAdmin = (Admin) request.getSession().getAttribute("admin");
+        if (currentAdmin == null) {
+            return "redirect:/login";
+        }
+        
+        // Cập nhật thông tin admin
+        currentAdmin.setEmail(updatedAdmin.getEmail());
+        // Không cập nhật mật khẩu ở đây, sẽ có form riêng để đổi mật khẩu
+        
+        // Lưu thông tin đã cập nhật
+        adminRepository.save(currentAdmin);
+        
+        // Cập nhật lại thông tin trong session
+        request.getSession().setAttribute("admin", currentAdmin);
+        
+        // Ghi log
+        Log log = new Log();
+        log.setAction("UPDATE_ACCOUNT");
+        log.setAdmin(currentAdmin);
+        log.setDetails("Admin " + currentAdmin.getUsername() + " đã cập nhật thông tin tài khoản");
+        logRepository.save(log);
+        
+        return "redirect:/account?success";
+    }
 
     @GetMapping("/settings")
-    public String settings(Model model) {
+    public String settings(Model model, HttpServletRequest request) {
+        // Kiểm tra quyền truy cập
+        Admin admin = (Admin) request.getSession().getAttribute("admin");
+        if (admin == null) {
+            return "redirect:/login";
+        }
+        
+        // Chỉ admin mới có quyền truy cập trang cài đặt
+        if (!"ADMIN".equals(admin.getRole())) {
+            return "redirect:/dashboard?error=access_denied";
+        }
+        
         // Thêm các thuộc tính cài đặt vào model nếu cần
         return "settings";
+    }
+    
+    @GetMapping("/admins")
+    public String adminList(Model model, HttpServletRequest request) {
+        // Kiểm tra quyền truy cập
+        Admin admin = (Admin) request.getSession().getAttribute("admin");
+        if (admin == null) {
+            return "redirect:/login";
+        }
+        
+        // Chỉ admin mới có quyền truy cập trang quản lý tài khoản
+        if (!"ADMIN".equals(admin.getRole())) {
+            return "redirect:/dashboard?error=access_denied";
+        }
+        
+        List<Admin> admins = adminRepository.findAll();
+        model.addAttribute("admins", admins);
+        return "admins/list";
+    }
+    
+    @GetMapping("/admins/add")
+    public String showAddAdminForm(Model model, HttpServletRequest request) {
+        // Kiểm tra quyền truy cập
+        Admin admin = (Admin) request.getSession().getAttribute("admin");
+        if (admin == null) {
+            return "redirect:/login";
+        }
+        
+        // Chỉ admin mới có quyền thêm tài khoản mới
+        if (!"ADMIN".equals(admin.getRole())) {
+            return "redirect:/dashboard?error=access_denied";
+        }
+        
+        model.addAttribute("admin", new Admin());
+        return "admins/add";
+    }
+    
+    @PostMapping("/admins/add")
+    public String addAdmin(@Valid @ModelAttribute("admin") Admin newAdmin, 
+                          BindingResult result, 
+                          HttpServletRequest request) {
+        // Kiểm tra quyền truy cập
+        Admin currentAdmin = (Admin) request.getSession().getAttribute("admin");
+        if (currentAdmin == null) {
+            return "redirect:/login";
+        }
+        
+        // Chỉ admin mới có quyền thêm tài khoản mới
+        if (!"ADMIN".equals(currentAdmin.getRole())) {
+            return "redirect:/dashboard?error=access_denied";
+        }
+        
+        if (result.hasErrors()) {
+            return "admins/add";
+        }
+        
+        // Kiểm tra username đã tồn tại chưa
+        if (adminRepository.existsByUsername(newAdmin.getUsername())) {
+            result.rejectValue("username", "error.username", "Tên đăng nhập đã tồn tại");
+            return "admins/add";
+        }
+        
+        // Lưu tài khoản mới
+        adminRepository.save(newAdmin);
+        
+        // Ghi log
+        Log log = new Log();
+        log.setAction("ADD_ADMIN");
+        log.setAdmin(currentAdmin);
+        log.setDetails("Admin " + currentAdmin.getUsername() + " đã thêm tài khoản mới: " + newAdmin.getUsername());
+        logRepository.save(log);
+        
+        return "redirect:/admins";
+    }
+    
+    @GetMapping("/admins/edit/{id}")
+    public String showEditAdminForm(@PathVariable("id") Integer id, 
+                                  Model model, 
+                                  HttpServletRequest request) {
+        // Kiểm tra quyền truy cập
+        Admin currentAdmin = (Admin) request.getSession().getAttribute("admin");
+        if (currentAdmin == null) {
+            return "redirect:/login";
+        }
+        
+        // Chỉ admin mới có quyền chỉnh sửa tài khoản
+        if (!"ADMIN".equals(currentAdmin.getRole())) {
+            return "redirect:/dashboard?error=access_denied";
+        }
+        
+        Optional<Admin> adminOpt = adminRepository.findById(id);
+        if (adminOpt.isEmpty()) {
+            return "redirect:/admins";
+        }
+        
+        model.addAttribute("admin", adminOpt.get());
+        return "admins/edit";
+    }
+    
+    @PostMapping("/admins/edit/{id}")
+    public String updateAdmin(@PathVariable("id") Integer id, 
+                            @Valid @ModelAttribute("admin") Admin updatedAdmin, 
+                            BindingResult result, 
+                            HttpServletRequest request) {
+        // Kiểm tra quyền truy cập
+        Admin currentAdmin = (Admin) request.getSession().getAttribute("admin");
+        if (currentAdmin == null) {
+            return "redirect:/login";
+        }
+        
+        // Chỉ admin mới có quyền chỉnh sửa tài khoản
+        if (!"ADMIN".equals(currentAdmin.getRole())) {
+            return "redirect:/dashboard?error=access_denied";
+        }
+        
+        if (result.hasErrors()) {
+            return "admins/edit";
+        }
+        
+        Optional<Admin> adminOpt = adminRepository.findById(id);
+        if (adminOpt.isEmpty()) {
+            return "redirect:/admins";
+        }
+        
+        Admin existingAdmin = adminOpt.get();
+        
+        // Cập nhật thông tin
+        existingAdmin.setEmail(updatedAdmin.getEmail());
+        existingAdmin.setRole(updatedAdmin.getRole());
+        
+        // Nếu mật khẩu được cung cấp, cập nhật mật khẩu
+        if (updatedAdmin.getPasswordHash() != null && !updatedAdmin.getPasswordHash().isEmpty()) {
+            existingAdmin.setPasswordHash(updatedAdmin.getPasswordHash());
+        }
+        
+        // Lưu thông tin đã cập nhật
+        adminRepository.save(existingAdmin);
+        
+        // Ghi log
+        Log log = new Log();
+        log.setAction("UPDATE_ADMIN");
+        log.setAdmin(currentAdmin);
+        log.setDetails("Admin " + currentAdmin.getUsername() + " đã cập nhật tài khoản: " + existingAdmin.getUsername());
+        logRepository.save(log);
+        
+        return "redirect:/admins";
     }
 
     @GetMapping("/brands/add")
@@ -222,7 +431,7 @@ public class WebController {
     }
 
     @GetMapping("/laptops/edit/{id}")
-    public String showEditLaptopForm(@org.springframework.web.bind.annotation.PathVariable("id") Long id, Model model) {
+    public String showEditLaptopForm(@PathVariable("id") Long id, Model model) {
         Optional<Laptop> laptopOpt = laptopRepository.findById(id.intValue());
         if (laptopOpt.isEmpty()) {
             return "redirect:/laptops";
@@ -252,6 +461,38 @@ public class WebController {
             logRepository.save(log);
         }
 
+        return "redirect:/laptops";
+    }
+    
+    @GetMapping("/laptops/delete/{id}")
+    public String showDeleteLaptopConfirmation(@PathVariable("id") Long id, Model model) {
+        Optional<Laptop> laptopOpt = laptopRepository.findById(id.intValue());
+        if (laptopOpt.isEmpty()) {
+            return "redirect:/laptops";
+        }
+        model.addAttribute("laptop", laptopOpt.get());
+        return "laptops/delete";
+    }
+    
+    @PostMapping("/laptops/delete/{id}")
+    public String deleteLaptop(@PathVariable("id") Long id, HttpServletRequest request) {
+        Optional<Laptop> laptopOpt = laptopRepository.findById(id.intValue());
+        if (laptopOpt.isPresent()) {
+            Laptop laptop = laptopOpt.get();
+            String laptopName = laptop.getName();
+            
+            // Xóa laptop
+            laptopRepository.delete(laptop);
+            
+            // Ghi log xóa laptop
+            Admin admin = (Admin) request.getSession().getAttribute("admin");
+            if (admin != null) {
+                Log log = new Log();
+                log.setAction("DELETE_LAPTOP");
+                log.setDetails("Admin " + admin.getUsername() + " đã xóa laptop: " + laptopName);
+                logRepository.save(log);
+            }
+        }
         return "redirect:/laptops";
     }
 }
